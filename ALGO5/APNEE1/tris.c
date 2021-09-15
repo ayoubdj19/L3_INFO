@@ -138,7 +138,7 @@ void lancer_mesures() {
 
   unsigned int germe;
   int T[NMAX];
-  int X,nbN,choix;
+  int X,nbN,choix,choixG;
   int *N;
   float FMOY;
 
@@ -177,11 +177,20 @@ void lancer_mesures() {
   scanf("%d", &choix);
   } while (choix < 1 || choix > 2);
 
+  do {
+  printf("Choix de la fonction de génération des tableaux :\n\t1)generation_aleatoire\n\t2)generation_aleatoire_non_uniforme\n\t(entrer le numéro de l'algorithme souhaité)\n");
+  scanf("%d", &choixG);
+  } while (choix < 1 || choix > 2);
+
+  if(choixG == 2){
+    choix+=2;
+  }
+
   FMOY = 0;
   printf("\n--------------------------------------------\n");
   switch (choix) {
     case 1:
-      printf("\n\tVous avez choisi l'algorithme de tri par insertion\n");
+      printf("\n\tVous avez choisi l'algorithme de tri par insertion avec la fonction de génération aléatoire\n");
       for(int k = 0; k < nbN; k++){
         for(int l = 0; l < X; l++) {
           generation_aleatoire(T, N[k]); /* initialisation du tableau T */
@@ -194,10 +203,37 @@ void lancer_mesures() {
       break;
 
     case 2:
-      printf("\n\tVous avez choisi l'algorithme de tri par segmentation\n");
+      printf("\n\tVous avez choisi l'algorithme de tri par segmentation avec la fonction de génération aléatoire\n");
       for(int k = 0; k < nbN; k++){
         for(int l = 0; l < X; l++) {
           generation_aleatoire(T, N[k]); /* initialisation du tableau T */
+          tri_segmentation(T, N[k]);	/* tri de T */
+          FMOY += F;
+        }
+        FMOY = FMOY/X;
+        printf("\n\tRESULTAT POUR N n°%d\nOn obtient un Fmoy = %f\n--------------------------------------------\n", k+1, FMOY);
+        FMOY = 0;
+      }
+      break;
+
+    case 3:
+      printf("\n\tVous avez choisi l'algorithme de tri par insertion avec la fonction de génération aléatoire non uniforme\n");
+      for(int k = 0; k < nbN; k++){
+        for(int l = 0; l < X; l++) {
+          generation_aleatoire_non_uniforme(T, N[k]); /* initialisation du tableau T */
+          FMOY += tri_insertion(T, N[k]);	/* tri de T */
+        }
+        FMOY = FMOY/X;
+        printf("\n\tRESULTAT POUR N n°%d\nOn obtient un Fmoy = %f\n--------------------------------------------\n", k+1, FMOY);
+        FMOY = 0;
+      }
+      break;
+
+    case 4:
+      printf("\n\tVous avez choisi l'algorithme de tri par segmentation avec la fonction de génération aléatoire non uniforme\n");
+      for(int k = 0; k < nbN; k++){
+        for(int l = 0; l < X; l++) {
+          generation_aleatoire_non_uniforme(T, N[k]); /* initialisation du tableau T */
           tri_segmentation(T, N[k]);	/* tri de T */
           FMOY += F;
         }
