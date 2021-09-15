@@ -66,7 +66,7 @@ int tri_insertion(int t[], int n) {
     t[j+1] = Clef;
   }
   /* Affichage du nombre de comparaison */
-  printf("Valeur de f = %d\n", F);
+  // printf("Valeur de f = %d\n", F);
   return F;
 }
 
@@ -99,7 +99,7 @@ int partitionner(int t[], int p, int d, int pivot){
     }
   }
   swap(&t[p],&t[i]);
-  printf("Valeur de f = %d\n", F);
+  //printf("Valeur de f = %d\n", F);
   return i;
 }
 
