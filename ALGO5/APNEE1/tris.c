@@ -3,7 +3,7 @@
 
 #define NMAX 50000		/* peut etre modifie si necessaire */
 
-
+int F;
 
 /*
 generation_aleatoire
@@ -44,10 +44,10 @@ Donnees : t : tableau d'entiers de taille > n, n : entier > 0
 Resultat : le tableau t est trie en ordre croissant
 */
 int tri_insertion(int t[], int n) {
-  int i,j,f;
+  int i,j;
   int Clef;
 
-  f = 0;
+  F = 0;
 
   for(i=1; i < n; i++) {
 
@@ -57,7 +57,7 @@ int tri_insertion(int t[], int n) {
 
     /* Decalage des valeurs du tableau */
     while((j >= 0) && (t[j] > Clef)) {
-      f++;
+      F++;
       t[j+1] = t[j];
       j = j - 1;
     }
@@ -66,8 +66,51 @@ int tri_insertion(int t[], int n) {
     t[j+1] = Clef;
   }
   /* Affichage du nombre de comparaison */
-  printf("Valeur de f = %d\n", f);
-  return f;
+  printf("Valeur de f = %d\n", F);
+  return F;
+}
+
+
+
+void swap(int *a, int *b){
+  int t = *a;
+  *a = *b;
+  *b = t;
+}
+
+/*
+partitionner
+Donnees : t : tableau d'entiers de taille > n, p, d, f : entier > 0
+p représente la position du premier entier du tableau
+d représente la position du dernier entier du tableau
+pivot représente la position du pivot du tableau
+Resultat :
+*/
+int partitionner(int t[], int p, int d, int pivot){
+  F = 0;
+  int i = p;
+  while(i < d){
+    if(t[i+1] <= t[p]){
+      F++;
+      i++;
+    } else {
+      swap(&t[d],&t[i+1]);
+      d--;
+    }
+  }
+  swap(&t[p],&t[i]);
+  printf("Valeur de f = %d\n", F);
+  return i;
+}
+
+void tri_rapide(int t[], int p, int d){
+  int pivot;
+  if(p < d){
+    pivot = (rand() % (d + 1 - p)) + p;
+    pivot = partitionner(t,p,d,pivot);
+    tri_rapide(t,p,pivot-1);
+    tri_rapide(t,pivot+1,d);
+  }
 }
 
 /*
@@ -76,50 +119,87 @@ Donnees : t : tableau d'entiers de taille > n, n : entier > 0
 Resultat : le tableau t est trie en ordre croissant
 */
 void tri_segmentation(int t[], int n) {
-  /* A completer */
+  tri_rapide(t, 0, n-1);
 }
-
 
 
 void lancer_mesures() {
 
-  unsigned int germe ;
-  char res;
+  unsigned int germe;
   int T[NMAX];
-  int N,X;
+  int X,nbN,choix;
+  int *N;
   float FMOY;
 
+  /*int t[6] = {3,4,1,50,9,2};
+  tri_segmentation(t,6);
+  printf("[");
+  for(int a = 0; a < 6; a++){
+    printf(" %d", t[a]);
+  }
+  printf("]\n");*/
+
   printf("Valeur du germe pour la fonction de tirage aleatoire ? ") ;
-  scanf("%d", &germe) ;
-  srand(germe) ;
+  scanf("%d", &germe);
+  srand(germe);
 
-  do {
-    printf("Lancer mesures multiples (cf exercice 2) ?\nO = oui | N = non\n");
-    scanf("%c", &res);
-  } while(res != 'O' && res != 'o' && res != 'N' && res != 'n');
+  printf("Nombre de valeurs de N souhaité ? ");
+  scanf("%d", &nbN);
 
-  do {
-    printf("Valeur de N ? ") ;
-    scanf("%d", &N) ;
-  } while (N<1 || N > NMAX) ;
+  N = malloc(sizeof(int)*nbN);
 
-  if(res == 'N' || res == 'n') {
-    generation_aleatoire(T, N) ; /* initialisation du tableau T */
-    tri_insertion(T, N) ;	/* tri de T */
-  } else {
+  for(int i = 0; i < nbN; i++){
     do {
-      printf("Valeur de X ? ") ;
-      scanf("%d", &X) ;
-    } while (X<1 || X > NMAX) ;
-
-    FMOY = 0;
-
-    for(int i = 0; i < X; i++) {
-      generation_aleatoire(T, N) ; /* initialisation du tableau T */
-      FMOY += tri_insertion(T, N) ;	/* tri de T */
-    }
-    FMOY = FMOY/X;
-    printf("On obtient un Fmoy = %f\n", FMOY);
+      printf("Valeur de N ? ");
+      scanf("%d", &N[i]) ;
+    } while (N[i]<1 || N[i] > NMAX);
   }
 
+
+  do {
+    printf("Valeur de X ? ");
+    scanf("%d", &X);
+  } while (X<1 || X > NMAX);
+
+  do {
+  printf("Choix de l'algorithme de tri :\n\t1)tri_insertion\n\t2)tri_segmentation\n\t(entrer le numéro de l'algorithme souhaité)\n");
+  scanf("%d", &choix);
+  } while (choix < 1 || choix > 2);
+
+  FMOY = 0;
+  printf("\n--------------------------------------------\n");
+  switch (choix) {
+    case 1:
+      printf("\n\tVous avez choisi l'algorithme de tri par insertion\n");
+      for(int k = 0; k < nbN; k++){
+        for(int l = 0; l < X; l++) {
+          generation_aleatoire(T, N[k]); /* initialisation du tableau T */
+          FMOY += tri_insertion(T, N[k]);	/* tri de T */
+        }
+        FMOY = FMOY/X;
+        printf("\n\tRESULTAT POUR N n°%d\nOn obtient un Fmoy = %f\n--------------------------------------------\n", k+1, FMOY);
+        FMOY = 0;
+      }
+      break;
+
+    case 2:
+      printf("\n\tVous avez choisi l'algorithme de tri par segmentation\n");
+      for(int k = 0; k < nbN; k++){
+        for(int l = 0; l < X; l++) {
+          generation_aleatoire(T, N[k]); /* initialisation du tableau T */
+          tri_segmentation(T, N[k]);	/* tri de T */
+          FMOY += F;
+        }
+        FMOY = FMOY/X;
+        printf("\n\tRESULTAT POUR N n°%d\nOn obtient un Fmoy = %f\n--------------------------------------------\n", k+1, FMOY);
+        FMOY = 0;
+      }
+      break;
+  }
+
+  printf("[");
+  for(int a = 0; a < N[0]; a++){
+    printf(" %d", T[a]);
+  }
+  printf("]\n");
 }
