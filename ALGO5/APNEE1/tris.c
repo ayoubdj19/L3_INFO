@@ -208,11 +208,11 @@ void lancer_mesures() {
       break;
   }
 
-  printf("[");
+  /*printf("[");
   for(int a = 0; a < N[0]; a++){
     printf(" %d", T[a]);
   }
-  printf("]\n");
+  printf("]\n");*/
 
   tri_correct(T,N[0]);
 }
