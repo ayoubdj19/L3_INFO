@@ -84,7 +84,7 @@ Donnees : t : tableau d'entiers de taille > n, p, d, f : entier > 0
 p représente la position du premier entier du tableau
 d représente la position du dernier entier du tableau
 pivot représente la position du pivot du tableau
-Resultat :
+Resultat : L'indice i de pivot correctement placé dans le tableau
 */
 int partitionner(int t[], int p, int d, int pivot){
   F = 0;
@@ -142,13 +142,6 @@ void lancer_mesures() {
   int *N;
   float FMOY;
 
-  /*int t[6] = {3,4,1,50,9,2};
-  tri_segmentation(t,6);
-  printf("[");
-  for(int a = 0; a < 6; a++){
-    printf(" %d", t[a]);
-  }
-  printf("]\n");*/
 
   printf("Valeur du germe pour la fonction de tirage aleatoire ? ") ;
   scanf("%d", &germe);
@@ -173,12 +166,12 @@ void lancer_mesures() {
   } while (X<1 || X > NMAX);
 
   do {
-  printf("Choix de l'algorithme de tri :\n\t1)tri_insertion\n\t2)tri_segmentation\n\t(entrer le numéro de l'algorithme souhaité)\n");
+  printf("Choix de l'algorithme de tri :\n\t1)tri_insertion\n\t2)tri_segmentation\n\tEntrer le numéro de l'algorithme souhaité : ");
   scanf("%d", &choix);
   } while (choix < 1 || choix > 2);
 
   do {
-  printf("Choix de la fonction de génération des tableaux :\n\t1)generation_aleatoire\n\t2)generation_aleatoire_non_uniforme\n\t(entrer le numéro de l'algorithme souhaité)\n");
+  printf("\nChoix de la fonction de génération des tableaux :\n\t1)generation_aleatoire\n\t2)generation_aleatoire_non_uniforme\n\tEntrer le numéro de l'algorithme souhaité : ");
   scanf("%d", &choixG);
   } while (choix < 1 || choix > 2);
 
@@ -190,7 +183,7 @@ void lancer_mesures() {
   printf("\n--------------------------------------------\n");
   switch (choix) {
     case 1:
-      printf("\n\tVous avez choisi l'algorithme de tri par insertion avec la fonction de génération aléatoire\n");
+      printf("\nVous avez choisi l'algorithme de tri par insertion avec la fonction de génération aléatoire\n");
       for(int k = 0; k < nbN; k++){
         for(int l = 0; l < X; l++) {
           generation_aleatoire(T, N[k]); /* initialisation du tableau T */
@@ -203,7 +196,7 @@ void lancer_mesures() {
       break;
 
     case 2:
-      printf("\n\tVous avez choisi l'algorithme de tri par segmentation avec la fonction de génération aléatoire\n");
+      printf("\nVous avez choisi l'algorithme de tri par segmentation avec la fonction de génération aléatoire\n");
       for(int k = 0; k < nbN; k++){
         for(int l = 0; l < X; l++) {
           generation_aleatoire(T, N[k]); /* initialisation du tableau T */
@@ -217,7 +210,7 @@ void lancer_mesures() {
       break;
 
     case 3:
-      printf("\n\tVous avez choisi l'algorithme de tri par insertion avec la fonction de génération aléatoire non uniforme\n");
+      printf("\nVous avez choisi l'algorithme de tri par insertion avec la fonction de génération aléatoire non uniforme\n");
       for(int k = 0; k < nbN; k++){
         for(int l = 0; l < X; l++) {
           generation_aleatoire_non_uniforme(T, N[k]); /* initialisation du tableau T */
@@ -230,7 +223,7 @@ void lancer_mesures() {
       break;
 
     case 4:
-      printf("\n\tVous avez choisi l'algorithme de tri par segmentation avec la fonction de génération aléatoire non uniforme\n");
+      printf("\nVous avez choisi l'algorithme de tri par segmentation avec la fonction de génération aléatoire non uniforme\n");
       for(int k = 0; k < nbN; k++){
         for(int l = 0; l < X; l++) {
           generation_aleatoire_non_uniforme(T, N[k]); /* initialisation du tableau T */
@@ -244,11 +237,13 @@ void lancer_mesures() {
       break;
   }
 
+  // Affichage du tableau trié
   /*printf("[");
   for(int a = 0; a < N[0]; a++){
     printf(" %d", T[a]);
   }
   printf("]\n");*/
 
-  tri_correct(T,N[0]);
+  // Verification du tri du tableau
+  //tri_correct(T,N[0]);
 }
