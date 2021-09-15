@@ -122,6 +122,17 @@ void tri_segmentation(int t[], int n) {
   tri_rapide(t, 0, n-1);
 }
 
+int tri_correct(int t[], int n){
+  for(int i = 1; i < n; i++){
+    if(t[i-1] > t[i]){
+      printf("\n\tTRI INCORRECT\n");
+      return 0;
+    }
+  }
+  printf("\n\tTRI OK\n");
+  return 1;
+}
+
 
 void lancer_mesures() {
 
@@ -143,7 +154,7 @@ void lancer_mesures() {
   scanf("%d", &germe);
   srand(germe);
 
-  printf("Nombre de valeurs de N souhaité ? ");
+  printf("Nombre de taille de tableau différent souhaité ? ");
   scanf("%d", &nbN);
 
   N = malloc(sizeof(int)*nbN);
@@ -202,4 +213,6 @@ void lancer_mesures() {
     printf(" %d", T[a]);
   }
   printf("]\n");
+
+  tri_correct(T,N[0]);
 }
