@@ -86,7 +86,7 @@ d représente la position du dernier entier du tableau
 pivot représente la position du pivot du tableau
 Resultat : L'indice i de pivot correctement placé dans le tableau
 */
-int partitionner(int t[], int p, int d, int pivot){
+int partitionner(int t[], int p, int d){
   F = 0;
   int i = p;
   while(i < d){
@@ -106,8 +106,7 @@ int partitionner(int t[], int p, int d, int pivot){
 void tri_rapide(int t[], int p, int d){
   int pivot;
   if(p < d){
-    pivot = (rand() % (d + 1 - p)) + p;
-    pivot = partitionner(t,p,d,pivot);
+    pivot = partitionner(t,p,d);
     tri_rapide(t,p,pivot-1);
     tri_rapide(t,pivot+1,d);
   }

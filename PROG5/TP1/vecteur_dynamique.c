@@ -28,10 +28,12 @@ double *acces_vecteur(vecteur v, int i) {
   } else if(i < v->taille){
     return &v->donnees[i];
   } else {
-    v->donnees = realloc(v->donnees, sizeof(double)*i);
+     double *newdonnees = (double *)realloc(v->donnees, sizeof(double)*i+1);
     if(v->donnees == NULL){
       return NULL;
     } else {
+      v->taille = i+1;
+      v->donnees = newdonnees;
       return &v->donnees[i];
     }
   }

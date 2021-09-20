@@ -5,7 +5,7 @@ matrice allouer_matrice(int l, int c) {
   matrice m;
   m.l = l;
   m.c = c;
-  m.donnees = malloc(sizeof(double)*l);
+  m.donnees = malloc(sizeof(double*)*l);
   for(int i = 0; i < l; i++){
     m.donnees[i] = malloc(sizeof(double)*c);
   }
