@@ -4,9 +4,10 @@ resultat_attendu="Bon parenthesage"
 #max=ls programs/ | wc -l
 cpOK=0
 cpXX=0
+isOK=0
 for file in programs/*
 do
-  ./$file <test.txt >resultat
+  ./$file <fichiers_test/fichier_vide.txt >resultat
   if diff resultat resultat_attendu
   then
     ((cpOK+=1))
