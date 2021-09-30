@@ -1,0 +1,1 @@
+./generateur_fichiers_test 500 ./fichiers_test_generes/parenthesage_correct/ 0 ./fichiers_test_generes/parenthesage_incorrect_trop_parentheses_fermantes/ 0 ./fichiers_test_generes/parenthesage_incorrect_trop_parentheses_ouvrantes/
