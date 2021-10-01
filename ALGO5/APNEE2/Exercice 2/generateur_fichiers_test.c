@@ -96,7 +96,7 @@ void EcrireFichierParenthesageCorrectNomAleatoireDansAdresse(char* adresseFichie
     //On tire aléatoirement un entier qui sera additionné avec le nombre de caractères minimum spécifié par
     //l'utilisateur. La valeur résultante sera la borne à partie de laquelle on arrêtera d'écrire des parenthèses ouvrantes
     //dans le fichier (pour être sûrs que l'algorithme a une fin)
-    //Passer par l'appel de cette fonction rand permet d'avoir des fichiers de tailles plus variables que si l'on prennait
+    //Passer par l'appel de cette fonction rand permet d'avoir des fichiers de tailles plus variables que si l'on prenait
     //pour borne la valeur spécifiée par l'utilisateur.
     int nbCaracteresAvantArretEcritureParenthesesOuvrantes = (rand()%50000) + nbCaracteresMinimumChaineEcrite;
 
@@ -110,8 +110,12 @@ void EcrireFichierParenthesageCorrectNomAleatoireDansAdresse(char* adresseFichie
         //-On regarde si le niveau minimal de parenthèses ouvertes est atteint.
         //-On regarde si le fichier est parenthésé correctement
         //
-        //->A partir du stade où l'on a dépassé la taille minimum de la chaine de caractère spécifiée par l'utilisateur, on ne peut écrire que des lettre, chiffres, des parenthèses fermantes dans le fichier
-        //  comme ça on n'est sûr que l'algorithme a une fin
+        //->A partir du stade où l'on a dépassé la taille minimum de la chaine de caractère spécifiée par l'utilisateur, deux cas de figure se présentent:
+        //  -Soit le niveau minimal de parenthèses ouvertes n'est pas atteint.
+        //   ->Dans ce cas là, les seuls caractères que l'on peut écrire sont des parenthèses ouvrantes et des lettres/chiffres).
+        //  -Soit le niveau minimal de parenthèses ouvertes est atteint.
+        //  ->Dans ce cas là, les seuls caractères que l'on peut écrire sont des parenthèses fermantes et des lettres/chiffres).
+        // =>En procédant de la sorte on est sûr que l'algorithme a une fin et que le fichier généré est bien parenthésé
 
 
         pileNonVide = InfosSommetPile(pilesTypeParenthesesOuvertesPlacees, &typeParentheseSommetPile, &profondeurSommet);
@@ -634,21 +638,18 @@ int main (int argc, char *argv[])
                         }
                         else
                         {
-                            if(tailleMinimumNbCaracteresFichiersMalParentheses < 1 || tailleMinimumNbCaracteresFichiersMalParentheses > 50000)
+                            if(nbFichiersMalParentheses > 0 && (tailleMinimumNbCaracteresFichiersMalParentheses < 1 || tailleMinimumNbCaracteresFichiersMalParentheses > 50000))
                             {
-                                printf("Erreur avec le nombre de caractères minimum que feront les chaines de caractères incorrectes générées saisi. Ce dernier doit être entre 0 (non compris) et 50000 (compris).\n") ;
+                                printf("Erreur avec le nombre de caractères minimum que feront les chaines de caractères incorrectes générées saisi. Ce dernier doit être entre 0 (non compris) et 50000 (compris) si vous désirez en générer au moins une.\n") ;
                                 erreurParametres = 1;
                             }
                             else
                             {
                                 //On contrôle le niveau d'imbrication minimum de parenthèses que devront avoir les fichiers générés correctement
-                                //Il faut que ce niveau d'imbrication soit <= (tailleMinimumNbCaracteres / 2) sinon la chaine de caractères ne peut être générée (pas assez de caractères pour ouvrir puis fermer les parenthèses correctement)
-                                //->Entre 0 et (tailleMinimumNbCaracteres/2). Si niveauImbricationMinimumParenthesesFichiersBienParentheses = 0, le fichier peut ne générer aucune chaine de caractères.
-                                if(niveauImbricationMinimumParenthesesFichiersBienParentheses < 0 || niveauImbricationMinimumParenthesesFichiersBienParentheses > (((double)tailleMinimumNbCaracteresFichiersMalParentheses) / 2))
+                                //Il faut que ce niveau d'imbrication soit >= 0
+                                if(niveauImbricationMinimumParenthesesFichiersBienParentheses < 0 || tailleMinimumNbCaracteresFichiersMalParentheses > 25000)
                                 {
-                                    printf("\nErreur avec le niveau d'imbrication minimum de parenthèses que devra avoir le fichier généré (pour les fichiers générés correctement) saisi.\n") ;
-                                    printf("Il faut que ce niveau d'imbrication soit <= ((taille chaines de caractères correctes générés) / 2) sinon la chaine de caractères ne peut être générée correctement (pas assez de caractères pour ouvrir puis fermer les parenthèses correctement).\n") ;
-                                    erreurParametres = 1;
+                                    printf("Erreur avec le niveau d'imbrication minimum de parenthèses que devront avoir chaines de caractères correctes générées saisi. Ce dernier doit être entre 0 et 25000 (tous deux compris).\n") ;erreurParametres = 1;
                                 }
                             }
                         }
