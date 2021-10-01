@@ -489,7 +489,7 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
                         nbAleatoire = rand()%3;
                         caractereEcrit = parenthesesOuvrantes[nbAleatoire];
                     }
-                    //Si l'on place une parenthèse ouvrante
+                    //Si l'on place une parenthèse fermante
                     //if(nbAleatoire == 1)
                     else
                     {
@@ -499,37 +499,53 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
                 }
                 else
                 {
-                    //Si la pile n'est pas vide, on écrit une parenthèse d'un type différent de celui du sommet (toujours de manière aléatoire)
-                    char parenthesesFermantesTirables[2];
+                    //Si la pile n'est pas vide, soit on écrit une parenthèse ouvrante, soir on écrit
+                    //une parenthèse d'un type différent de celui du sommet (toujours de manière aléatoire)
 
-                    if(typeParentheseSommetPile == PARENTHESE)
+                    //On tire au hasard pour savoir si l'on place une parethèse ouvrante/fermante
+                    nbAleatoire = rand()%2;
+
+                    //Si l'on place une parenthèse ouvrante
+                    if(nbAleatoire == 0)
                     {
-                        parenthesesFermantesTirables[0] = '}';
-                        parenthesesFermantesTirables[1] = ']';
+                        nbAleatoire = rand()%3;
+                        caractereEcrit = parenthesesOuvrantes[nbAleatoire];
                     }
+                    //Si l'on place une parenthèse fermante
+                    //if(nbAleatoire == 1)
                     else
                     {
-                        if(typeParentheseSommetPile == ACCOLADE)
+                        char parenthesesFermantesTirables[2];
+
+                        if(typeParentheseSommetPile == PARENTHESE)
                         {
-                            parenthesesFermantesTirables[0] = ')';
+                            parenthesesFermantesTirables[0] = '}';
                             parenthesesFermantesTirables[1] = ']';
                         }
                         else
                         {
-                            if(typeParentheseSommetPile == CROCHET)
+                            if(typeParentheseSommetPile == ACCOLADE)
                             {
                                 parenthesesFermantesTirables[0] = ')';
-                                parenthesesFermantesTirables[1] = '}';
+                                parenthesesFermantesTirables[1] = ']';
                             }
                             else
                             {
-                                return;
+                                if(typeParentheseSommetPile == CROCHET)
+                                {
+                                    parenthesesFermantesTirables[0] = ')';
+                                    parenthesesFermantesTirables[1] = '}';
+                                }
+                                else
+                                {
+                                    return;
+                                }
                             }
                         }
+                        
+                        nbAleatoire = rand()%2;
+                        caractereEcrit = parenthesesFermantesTirables[nbAleatoire];
                     }
-                    
-                    nbAleatoire = rand()%2;
-                    caractereEcrit = parenthesesFermantesTirables[nbAleatoire];
                 }
 
                 //On écrit la parenthèse dans le fichier
