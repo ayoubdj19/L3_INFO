@@ -1,0 +1,7 @@
+./generateur_fichiers_test ./fichiers_test_generes/parenthesage_correct/ 500 0 0 ./fichiers_test_generes/parenthesage_incorrect/ 0 0
+
+./generateur_fichiers_test ./fichiers_test_generes/parenthesage_correct/ 50 50000 0 ./fichiers_test_generes/parenthesage_incorrect/ 0 0
+
+./generateur_fichiers_test ./fichiers_test_generes/parenthesage_correct/ 10 200 100 ./fichiers_test_generes/parenthesage_incorrect/ 0 0
+
+./generateur_fichiers_test ./fichiers_test_generes/parenthesage_correct/ 0 0 0 ./fichiers_test_generes/parenthesage_incorrect/ 500 1
