@@ -303,21 +303,26 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
     const char parenthesesFermantes[] = ")}]";
 
     
-    //Pile des parenthèses ouvertes placées que l'on a pas encore fermé. Utile dans le cas où on veut générer un fichier correct
+    //Pile des parenthèses ouvertes placées que l'on a pas encore fermé. Utile pour savoir si "une parenthèse fermante est placée
+    //alors que son équivalent ouvrant n'était pas la dernière parenthèse écrite dans le fichier"
     //On la dépile dès lors qu'une parenthèse fermante est placée à la suite d'une parenthèse ouvrante du même type.
     PileTypeParentheses* pilesTypeParenthesesOuvertesPlacees = NouvellePileTypeParentheses();
     int pileNonVide;
+
+    //Variable indiquant si la conditions de mal-parenthésage "une parenthèse fermante est placée alors que son équivalent ouvrant
+    //n'était pas la dernière parenthèse écrite dans le fichier" du fichier est respectée
+    int parentheseOuvranteSansFermantePlacee = 0;
+
     TYPES_PARENTHESES typeParentheseSommetPile = NON_DEFINI;
     TYPES_PARENTHESES typeParentheseCaractereEcrit = NON_DEFINI;
     int profondeurSommet;
+
+    
     int i = 0, nbCaracteresRestants;
 
     //Variables utiles pour savoir quel caractère doit être écrit dans le fichier
     int nbAleatoire;
     char caractereEcrit;
-
-    //Variable indiquant si l'une des conditions de mal-parenthésage du fichier est respectée
-    int fichierMalGenere = 0;
     
     //On tire aléatoirement le nombre de caractères qui seront marqués dans le fichier (en fonction du nombre de caractères minimum saisi par l'utilisateur)
     int nbCaracteres = (rand()%50000) + nbCaracteresMinimumChaineEcrite;
@@ -335,7 +340,7 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
         //Si l'on arrive à la fin du fichier et qu'aucune de ces condition n'est respectée, on vient faire exprès de placer une
         //parenthèse fermante qui n'a pas été ouverte/ouvrir une parenthèse sans la fermer (car on est à la fin du fichier) afin que le fichier ne soit plus parenthésé correctement
         //->Le choix de procéder d'une manière ou d'une autre est pris aléatoirement
-        //La variable booléene est: fichierMalGenere
+        //La variable booléene est: parentheseOuvranteSansFermantePlacee
 
         //On va utiliser une pile nous permettant de savoir quelles parenthèses ont été ouvertes et ne sont pas encore fermées
         //pour contrôler ces conditions
@@ -348,7 +353,7 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
 
         //On, regarde si le caractère que l'on doit placer dans le fichier peut être choisi de manière totalement aléatoire
         //(si on n'est pas en train de choisir le dernier caractère écrit dans le fichier/on est déjà sûr que le fichier généré a une erreur)
-        if(nbCaracteresRestants > 1 || fichierMalGenere == 1)
+        if(nbCaracteresRestants > 1 || parentheseOuvranteSansFermantePlacee == 1)
         {
             //On commence par tirer au hasard le type du caractère écrit.
             //Si nbAleatoire = 0: Lettre ou chiffre
@@ -399,7 +404,7 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
                     //Par contre dans le cas inverse, si la parenthèse tirée est cohérente par rapport à la dernière
                     //parenthèse ouverte (si il y en a une), on dépile la pile et le parenthésage reste correct.
                     //Si elle n'est pas correcte (pas de parenthèse ouverte/parenthèse ouverte d'un type différent),
-                    //on est sûr que le parenthésage est incorrect et on passe fichierMalGenere à 1.
+                    //on est sûr que le parenthésage est incorrect et on passe parentheseOuvranteSansFermantePlacee à 1.
                     nbAleatoire = rand()%3;
                     caractereEcrit = parenthesesFermantes[nbAleatoire];
                     fprintf(fichierEcrit, "%c", caractereEcrit);
@@ -407,14 +412,14 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
 
                     //On regarde si le parenthésage était déjà incorrect
                     //Si il ne l'était pas
-                    if(fichierMalGenere == 0)
+                    if(parentheseOuvranteSansFermantePlacee == 0)
                     {
                         pileNonVide = InfosSommetPile(pilesTypeParenthesesOuvertesPlacees, &typeParentheseSommetPile, &profondeurSommet);
 
                         //Si la pile est vide, le parenthésage est alors incorrect
                         if(pileNonVide != 1)
                         {
-                            fichierMalGenere = 1;
+                            parentheseOuvranteSansFermantePlacee = 1;
                         }
                         else
                         {
@@ -427,7 +432,7 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
                                 //Parenthésage incorrect
                                 if(typeParentheseCaractereEcrit != typeParentheseSommetPile)
                                 {
-                                    fichierMalGenere = 1;
+                                    parentheseOuvranteSansFermantePlacee = 1;
                                 }
                                 //Sinon, on dépile et le parenthésage reste correct
                                 {
