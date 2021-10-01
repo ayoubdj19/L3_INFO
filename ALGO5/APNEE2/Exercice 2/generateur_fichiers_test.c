@@ -92,204 +92,118 @@ void EcrireFichierParenthesageCorrectNomAleatoireDansAdresse(char* adresseFichie
 
     //Variable contenant le niveau maximal d'imbrication des parenthèses du fichier (à comparer avec niveauImbricationMinimumParenthesesFichiersBienParentheses pour générer le fichier correctement)
     int niveauDImbricationMaxFichierEcrit = 0;
-    
-    //On tire aléatoirement le nombre de caractères qui seront marqués dans le fichier (en fonction du nombre de caractères minimum saisi par l'utilisateur)
-    int nbCaracteres = (rand()%50000) + nbCaracteresMinimumChaineEcrite;
-    
-    
-    while (i < nbCaracteres)
+
+    //On tire aléatoirement un entier qui sera additionné avec le nombre de caractères minimum spécifié par
+    //l'utilisateur. La valeur résultante sera la borne à partie de laquelle on arrêtera d'écrire des parenthèses ouvrantes
+    //dans le fichier (pour être sûrs que l'algorithme a une fin)
+    //Passer par l'appel de cette fonction rand permet d'avoir des fichiers de tailles plus variables que si l'on prennait
+    //pour borne la valeur spécifiée par l'utilisateur.
+    int nbCaracteresAvantArretEcritureParenthesesOuvrantes = (rand()%50000) + nbCaracteresMinimumChaineEcrite;
+
+
+    while (i < nbCaracteresAvantArretEcritureParenthesesOuvrantes
+           || niveauDImbricationMaxFichierEcrit < niveauImbricationMinimumParentheses
+           || EstPileVide(pilesTypeParenthesesOuvertesPlacees) == 0)
     {
-        nbCaracteresRestants = nbCaracteres - i;
-        
         //Pour que le fichier soit généré correctement:
-        //-On regarde si l'on doit fermer la/les parenthèses ouverte(s) à cause du fait que l'on arriverait en fin de fichier
-        //-On regarde si le niveau minimal de parenthèses ouvertes est atteint. Si il ne l'est pas on regarde le nombre de caractères
-        // restants dans le fichier et on décide de si il faut obligatoirement ouvrir une parenthèse pour atteindre ce niveau car
-        // il resterait tout juste la place nécessaire à sa fermeture après l'avoir placée.
+        //-On regarde si l'on doit continuer à écrire dans le fichier pour que la taille de la chaine de caractère soit au moins aussi grande que la taille minimale spécifiée par l'utilisateur
+        //-On regarde si le niveau minimal de parenthèses ouvertes est atteint.
+        //-On regarde si le fichier est parenthésé correctement
+        //
+        //->A partir du stade où l'on a dépassé la taille minimum de la chaine de caractère spécifiée par l'utilisateur, on ne peut écrire que des lettre, chiffres, des parenthèses fermantes dans le fichier
+        //  comme ça on n'est sûr que l'algorithme a une fin
+
+
         pileNonVide = InfosSommetPile(pilesTypeParenthesesOuvertesPlacees, &typeParentheseSommetPile, &profondeurSommet);
 
         if(pileNonVide != 1)
         {
             profondeurSommet = 0;
         }
-    
-        //Si il ne faut pas obligatoirement placer de parenthèse fermante
-        if(nbCaracteresRestants > profondeurSommet)
+        
+        //On commence par tirer au hasard le type du caractère écrit.
+        //Si nbAleatoire = 0: Lettre ou chiffre
+        //Si nbAleatoire = 1: Parenthèse ouvrante
+        //Si nbAleatoire = 2: Parenthèse fermante
+        //On laisse le choix ou non de la parenthèse fermante en fonction de si il est possible ou non de la placer
+        //On laisse le choix de la parenthèse ouvrante si l'on a pas dépassé la taille minimale spécifiée par l'utilisateur
+
+        //Cas dans lequel on peut placer une parenthèse fermante
+        if(profondeurSommet > 0)
         {
-            //Si il ne reste pas assez de caractères pouvant être placés dans le fichier pour placer une parenthèse et la fermer au tour suivant
-            if(nbCaracteresRestants == (profondeurSommet + 1))
+            //Cas dans lequel on peut placer une parenthèse ouvrante
+            if(i < nbCaracteresAvantArretEcritureParenthesesOuvrantes)
             {
-                //On tire au hasard un caractère qui peut soit être une parenthèse fermante, soit une lettre ou un chiffre et on l'écrit dans le fichier
-                //On commence par tirer au hasard le type du caractère écrit.
-                //Si nbAleatoire = 0: Lettre ou chiffre
-                //Si nbAleatoire = 1: Parenthèse fermante
-
-                nbAleatoire = rand()%2;
-
-                if(nbAleatoire == 0)
-                {
-                    //On tire au hasard un caractère autre qu'une parenthèse et on l'écrit dans le fichier
-                    nbAleatoire = rand()%62;
-                    fprintf(fichierEcrit, "%c", lettresEtChiffres[nbAleatoire]);
-                }
-                //if(nbAleatoire == 1)
-                else
-                {
-                    //On choisit, en fonction de la fernière parenthèse ouverte, la parenthèse fermante à écrire dans le fichier
-                    Depiler(pilesTypeParenthesesOuvertesPlacees, &typeParentheseSommetPile, &profondeurSommet);
-                    
-                    if(typeParentheseSommetPile == PARENTHESE)
-                    {
-                        caractereEcrit = ')';
-                    }
-                    else
-                    {
-                        if(typeParentheseSommetPile == ACCOLADE)
-                        {
-                            caractereEcrit = '}';
-                        }
-                        //if(typeParentheseSommetPile == CROCHET)
-                        else
-                        {
-                            caractereEcrit = ']';
-                        }
-                    }
-
-                    fprintf(fichierEcrit, "%c", caractereEcrit);
-                }
+                nbAleatoire = rand()%3;
             }
-            //Sinon, on regarde si il faut absolument ouvrir une paranthèse pour atteindre le niveau d'imbrication minimum
             else
             {
-                //Si il faut absolument ouvrir une paranthèse pour atteindre le niveau d'imbrication minimum
-                if((niveauDImbricationMaxFichierEcrit < niveauImbricationMinimumParentheses)
-                    && (((niveauImbricationMinimumParentheses - profondeurSommet) * 2) == nbCaracteresRestants))
+                nbAleatoire = rand()%2;
+
+                if(nbAleatoire == 1)
                 {
-                    //On place une parenthèse au hasard
-                    //On tire au hasard une parenthèse ouvrante et on l'écrit dans le fichier
-                    nbAleatoire = rand()%3;
-                    caractereEcrit = parenthesesOuvrantes[nbAleatoire];
-                    fprintf(fichierEcrit, "%c", caractereEcrit);
-
-                    //On empile la parenthèse ouvrante écrite dans la pile
-                    if(caractereEcrit == '(')
-                    {
-                        Empile(pilesTypeParenthesesOuvertesPlacees, PARENTHESE);
-                    }
-                    else
-                    {
-                        if(caractereEcrit == '{')
-                        {
-                            Empile(pilesTypeParenthesesOuvertesPlacees, ACCOLADE);
-                        }
-                        //if(caractereEcrit == '[')
-                        else
-                        {
-                            Empile(pilesTypeParenthesesOuvertesPlacees, CROCHET);
-                        }
-                    }
-
-                    //On met à jour la variable contenant le niveau d'imbrication maximal du fichier écrit si le niveau
-                    //d'imbrication actuel est supérieur à sa valeur
-                    if(niveauDImbricationMaxFichierEcrit < (profondeurSommet + 1))
-                    {
-                        niveauDImbricationMaxFichierEcrit = profondeurSommet + 1;
-                    }
-                }
-                //Sinon, on peut placer n'importe quel caractère
-                else
-                {
-                    //On commence par tirer au hasard le type du caractère écrit.
-                    //Si nbAleatoire = 0: Lettre ou chiffre
-                    //Si nbAleatoire = 1: Parenthèse ouvrante
-                    //Si nbAleatoire = 2: Parenthèse fermante
-                    //On laisse le choix ou non de la parenthèse fermante en fonction de si il est possible ou non de la placer
-
-                    //Cas dans lequel on peut placer une parenthèse fermante
-                    if(profondeurSommet > 0)
-                    {
-                        nbAleatoire = rand()%3;
-                    }
-                    //Cas dans lequel on ne peut pas
-                    else
-                    {
-                        nbAleatoire = rand()%2;
-                    }
-
-                    if(nbAleatoire == 0)
-                    {
-                        //On tire au hasard un caractère autre qu'une parenthèse et on l'écrit dans le fichier
-                        nbAleatoire = rand()%62;
-                        fprintf(fichierEcrit, "%c", lettresEtChiffres[nbAleatoire]);
-                    }
-                    else
-                    {
-                        if(nbAleatoire == 1)
-                        {
-                            //On tire au hasard une parenthèse ouvrante et on l'écrit dans le fichier
-                            nbAleatoire = rand()%3;
-                            caractereEcrit = parenthesesOuvrantes[nbAleatoire];
-                            fprintf(fichierEcrit, "%c", caractereEcrit);
-
-                            //On empile la parenthèse ouvrante écrite dans la pile
-                            if(caractereEcrit == '(')
-                            {
-                                Empile(pilesTypeParenthesesOuvertesPlacees, PARENTHESE);
-                            }
-                            else
-                            {
-                                if(caractereEcrit == '{')
-                                {
-                                    Empile(pilesTypeParenthesesOuvertesPlacees, ACCOLADE);
-                                }
-                                //if(caractereEcrit == '[')
-                                else
-                                {
-                                    Empile(pilesTypeParenthesesOuvertesPlacees, CROCHET);
-                                }
-                            }
-
-                            //On met à jour la variable contenant le niveau d'imbrication maximal du fichier écrit si le niveau
-                            //d'imbrication actuel est supérieur à sa valeur
-                            if(niveauDImbricationMaxFichierEcrit < (profondeurSommet + 1))
-                            {
-                                niveauDImbricationMaxFichierEcrit = profondeurSommet + 1;
-                            }
-                        }
-                        //if(nbAleatoire == 2)
-                        else
-                        {
-                            //On choisit, en fonction de la fernière parenthèse ouverte, la parenthèse fermante à écrire dans le fichier
-                            Depiler(pilesTypeParenthesesOuvertesPlacees, &typeParentheseSommetPile, &profondeurSommet);
-                            
-                            if(typeParentheseSommetPile == PARENTHESE)
-                            {
-                                caractereEcrit = ')';
-                            }
-                            else
-                            {
-                                if(typeParentheseSommetPile == ACCOLADE)
-                                {
-                                    caractereEcrit = '}';
-                                }
-                                //if(typeParentheseSommetPile == CROCHET)
-                                else
-                                {
-                                    caractereEcrit = ']';
-                                }
-                            }
-
-                            fprintf(fichierEcrit, "%c", caractereEcrit);
-                        }
-                    }
+                    nbAleatoire = 2;
                 }
             }
         }
-        //Sinon, soit il faut obligatoirement placer une parenthèse fermante de bon type, soit le fichier a mal été généré
+        //Cas dans lequel on ne peut pas
         else
         {
-            if(nbCaracteresRestants == profondeurSommet)
+            //Cas dans lequel on peut placer une parenthèse ouvrante
+            if(i < nbCaracteresAvantArretEcritureParenthesesOuvrantes)
             {
+                nbAleatoire = rand()%2;
+            }
+            else
+            {
+                nbAleatoire = 0;
+            }
+        }
+
+        if(nbAleatoire == 0)
+        {
+            //On tire au hasard un caractère autre qu'une parenthèse et on l'écrit dans le fichier
+            nbAleatoire = rand()%62;
+            fprintf(fichierEcrit, "%c", lettresEtChiffres[nbAleatoire]);
+        }
+        else
+        {
+            if(nbAleatoire == 1)
+            {
+                //On tire au hasard une parenthèse ouvrante et on l'écrit dans le fichier
+                nbAleatoire = rand()%3;
+                caractereEcrit = parenthesesOuvrantes[nbAleatoire];
+                fprintf(fichierEcrit, "%c", caractereEcrit);
+
+                //On empile la parenthèse ouvrante écrite dans la pile
+                if(caractereEcrit == '(')
+                {
+                    Empile(pilesTypeParenthesesOuvertesPlacees, PARENTHESE);
+                }
+                else
+                {
+                    if(caractereEcrit == '{')
+                    {
+                        Empile(pilesTypeParenthesesOuvertesPlacees, ACCOLADE);
+                    }
+                    //if(caractereEcrit == '[')
+                    else
+                    {
+                        Empile(pilesTypeParenthesesOuvertesPlacees, CROCHET);
+                    }
+                }
+
+                //On met à jour la variable contenant le niveau d'imbrication maximal du fichier écrit si le niveau
+                //d'imbrication actuel est supérieur à sa valeur
+                if(niveauDImbricationMaxFichierEcrit < (profondeurSommet + 1))
+                {
+                    niveauDImbricationMaxFichierEcrit = profondeurSommet + 1;
+                }
+            }
+            //if(nbAleatoire == 2)
+            else
+            {
+                //On choisit, en fonction de la fernière parenthèse ouverte, la parenthèse fermante à écrire dans le fichier
                 Depiler(pilesTypeParenthesesOuvertesPlacees, &typeParentheseSommetPile, &profondeurSommet);
                 
                 if(typeParentheseSommetPile == PARENTHESE)
@@ -310,11 +224,6 @@ void EcrireFichierParenthesageCorrectNomAleatoireDansAdresse(char* adresseFichie
                 }
 
                 fprintf(fichierEcrit, "%c", caractereEcrit);
-            }
-            else
-            {
-                printf("Le fichier a mal été généré.\n");
-                return;
             }
         }
         
