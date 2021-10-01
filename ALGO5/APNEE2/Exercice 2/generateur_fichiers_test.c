@@ -317,7 +317,7 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
     TYPES_PARENTHESES typeParentheseCaractereEcrit = NON_DEFINI;
     int profondeurSommet;
 
-    
+
     int i = 0, nbCaracteresRestants;
 
     //Variables utiles pour savoir quel caractère doit être écrit dans le fichier
@@ -325,12 +325,12 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
     char caractereEcrit;
     
     //On tire aléatoirement le nombre de caractères qui seront marqués dans le fichier (en fonction du nombre de caractères minimum saisi par l'utilisateur)
-    int nbCaracteres = (rand()%50000) + nbCaracteresMinimumChaineEcrite;
+    int nbCaracteresAEcrireDansFichier = (rand()%50000) + nbCaracteresMinimumChaineEcrite;
     
     
     while (i < nbCaracteres)
     {
-        nbCaracteresRestants = nbCaracteres - i;
+        nbCaracteresRestants = nbCaracteresAEcrireDansFichier - i;
         
         //Pour que le fichier soit généré de manière incorrecte à coup sûr, il faut que l'une de ces 2 conditions soit respectée:
         //-Une parenthèse a été ouverte mais n'a jamais été fermée
