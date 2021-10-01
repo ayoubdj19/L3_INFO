@@ -476,11 +476,26 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
                 pileNonVide = InfosSommetPile(pilesTypeParenthesesOuvertesPlacees, &typeParentheseSommetPile, &profondeurSommet);
 
                 //Si la pile est vide, aucune parenthèse ouvrante pas encore fermée n'est écrite dans le fichier et on peut
-                //placer n'importe quelle parenthèse
+                //placer n'importe quelle parenthèse (ouvrante ou fermante)
                 if(pileNonVide != 1)
                 {
-                    nbAleatoire = rand()%3;
-                    caractereEcrit = parenthesesFermantes[nbAleatoire];
+                    //On tire au hasard pour savoir si l'on place une parethèse ouvrante/fermante
+
+                    nbAleatoire = rand()%2;
+
+                    //Si l'on place une parenthèse ouvrante
+                    if(nbAleatoire == 0)
+                    {
+                        nbAleatoire = rand()%3;
+                        caractereEcrit = parenthesesOuvrantes[nbAleatoire];
+                    }
+                    //Si l'on place une parenthèse ouvrante
+                    //if(nbAleatoire == 1)
+                    else
+                    {
+                        nbAleatoire = rand()%3;
+                        caractereEcrit = parenthesesFermantes[nbAleatoire];
+                    }
                 }
                 else
                 {
@@ -517,7 +532,7 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
                     caractereEcrit = parenthesesFermantesTirables[nbAleatoire];
                 }
 
-                //On écrit la parenthèse fermante dans le fichier
+                //On écrit la parenthèse dans le fichier
                 fprintf(fichierEcrit, "%c", caractereEcrit);
             }
         }
