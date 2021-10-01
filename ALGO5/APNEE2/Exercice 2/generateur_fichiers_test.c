@@ -328,7 +328,7 @@ void EcrireFichierParenthesageIncorrectNomAleatoireDansAdresse(char* adresseFich
     int nbCaracteresAEcrireDansFichier = (rand()%50000) + nbCaracteresMinimumChaineEcrite;
     
     
-    while (i < nbCaracteres)
+    while (i < nbCaracteresAEcrireDansFichier)
     {
         nbCaracteresRestants = nbCaracteresAEcrireDansFichier - i;
         
