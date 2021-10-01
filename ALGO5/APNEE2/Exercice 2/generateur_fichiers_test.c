@@ -136,7 +136,8 @@ void EcrireFichierParenthesageCorrectNomAleatoireDansAdresse(char* adresseFichie
         if(profondeurSommet > 0)
         {
             //Cas dans lequel on peut placer une parenthèse ouvrante
-            if(i < nbCaracteresAvantArretEcritureParenthesesOuvrantes)
+            if(i < nbCaracteresAvantArretEcritureParenthesesOuvrantes
+               || niveauDImbricationMaxFichierEcrit < niveauImbricationMinimumParentheses)
             {
                 nbAleatoire = rand()%3;
             }
@@ -154,7 +155,8 @@ void EcrireFichierParenthesageCorrectNomAleatoireDansAdresse(char* adresseFichie
         else
         {
             //Cas dans lequel on peut placer une parenthèse ouvrante
-            if(i < nbCaracteresAvantArretEcritureParenthesesOuvrantes)
+            if(i < nbCaracteresAvantArretEcritureParenthesesOuvrantes
+               || niveauDImbricationMaxFichierEcrit < niveauImbricationMinimumParentheses)
             {
                 nbAleatoire = rand()%2;
             }
