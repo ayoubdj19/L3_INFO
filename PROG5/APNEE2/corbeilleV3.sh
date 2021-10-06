@@ -16,20 +16,28 @@ then
   do
     case $1 in
       efface)
+        # Recuparation du path du fichier recherche dans le repertoire courant
         pos=$(find . -name $p)
+
+        # On compte les nombre de caractere pour enlever le '.' au debut de $pos
         nbChar=${#pos}-1
         pathfile=$(echo $pos || tail -c $nbChar)
         mv $pathfile $HOME/.corbeille
         ;;
 
       restaure)
+        # Recuparation du path du fichier recherche dans la corbeille
         pos=$(find $HOME/.corbeille/ -name $p)
+
+        # On compte les nombre de caractere pour enlever le '.' au debut de $pos
         nbChar=${#pos}-1
         pathfile=$(echo $pos || tail -c $nbChar)
         mv $HOME/.corbeille/$p .
         ;;
 
       info)
+        # On cherche si le fichier/dossier demandé est dans la corbeille
+        # ou le repertoire courant
         if [[ -d $p ]]
         then
           ls -l $p
