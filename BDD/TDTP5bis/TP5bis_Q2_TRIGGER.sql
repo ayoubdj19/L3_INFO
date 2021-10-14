@@ -31,7 +31,7 @@ CREATE OR REPLACE TRIGGER LesContrats_chevauchement
     BEGIN
         SELECT noP,dateDep,dateArr INTO noPchauffeurs,DateDepart,DateArrivee
         FROM LesContrats;
-        IF :NEW.noP = noPchauffeurs AND ((:NEW.dateDep <= DateDepart AND :NEW.dateArr <= DateArrivee) OR (:NEW.dateDep >= DateDepart AND :NEW.dateArr >= DateArrivee)) THEN
+        IF :NEW.noP = noPchauffeurs AND ((:NEW.dateDep <= DateDepart AND :NEW.dateArr <= DateArrivee) OR (:NEW.dateDep >= DateDepart AND :NEW.dateArr >= DateArrivee) OR (:NEW.dateDep <= DateDepart AND :NEW.dateArr >= DateArrivee) OR (:NEW.dateDep >= DateDepart AND :NEW.dateArr <= DateArrivee)) THEN
             RAISE chevauchementDates;
         END IF;
         EXCEPTION
