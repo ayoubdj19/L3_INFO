@@ -1,6 +1,6 @@
 DROP TABLE LesContrats;
 DROP TABLE LesDistances;
-DROP TABLE LesChauffeurs;
+DROP TABLE LesChauffeurs_base;
 DROP TABLE LesSecretaires;
 DROP TABLE LesCamions;
 DROP TABLE LesClients;
@@ -39,11 +39,9 @@ CREATE TABLE LesSecretaires(
     CONSTRAINT S_fk2 FOREIGN KEY (noC) REFERENCES LesClients(noC)
 );
 
-CREATE TABLE LesChauffeurs(
-    noP NUMBER (4,0),
-    nbK NUMBER (8,0),
-    CONSTRAINT ch_pk PRIMARY KEY (noP),
-    CONSTRAINT ch_fk FOREIGN KEY (noP) REFERENCES LesPersonnes(noP) ON DELETE CASCADE
+CREATE TABLE LesChauffeurs_base(
+  noP INT PRIMARY KEY,
+  CONSTRAINT FK_Chau_noP FOREIGN KEY (noP) REFERENCES LesPersonnes(noP)
 );
 
 CREATE TABLE LesDistances (
@@ -66,7 +64,7 @@ CREATE TABLE LesContrats(
     CONSTRAINT co_pk PRIMARY KEY (noTr),
     CONSTRAINT co_fk1 FOREIGN KEY (immat) REFERENCES LesCamions(immat),
     CONSTRAINT co_fk2 FOREIGN KEY (noC) REFERENCES LesClients(noC),
-    CONSTRAINT co_fk3 FOREIGN KEY (noP) REFERENCES LesChauffeurs(noP),
+    CONSTRAINT co_fk3 FOREIGN KEY (noP) REFERENCES LesChauffeurs_base(noP),
     CONSTRAINT co_fk4 FOREIGN KEY (vDep,vArr) REFERENCES LesDistances(vDep,vArr),
     CONSTRAINT co_ch1 CHECK (dateDep <= dateArr)
 );
@@ -113,9 +111,9 @@ INSERT INTO LesSecretaires (noP, noC) VALUES (2, 1002);
 INSERT INTO LesSecretaires (noP, noC) VALUES (4, 1003);
 
 -- NBKM 0 PAR DEFAUT
-INSERT INTO LesChauffeurs (noP) VALUES (1);
-INSERT INTO LesChauffeurs (noP) VALUES (3);
-INSERT INTO LesChauffeurs (noP) VALUES (5);
+INSERT INTO LesChauffeurs_base (noP) VALUES (1);
+INSERT INTO LesChauffeurs_base (noP) VALUES (3);
+INSERT INTO LesChauffeurs_base (noP) VALUES (5);
 
 INSERT INTO LesContrats (noTr, dateDep, dateArr, vDep, vArr, noC, immat, noP)
 VALUES (100, TO_DATE('2017-01-01', 'YYYY-MM-DD'), TO_DATE('2017-02-21', 'YYYY-MM-DD'), 'Lyon', 'Marseille', 1001, '13 CHX 38', 3);
