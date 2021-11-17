@@ -55,13 +55,110 @@ void print_symbols() {
 
 /************** Grammaire *****************/
 
+/*
+O -> +
+O -> -
+O -> *
+O -> /
+O -> ^
+*/
+void O() {
+  if (currentToken()->type == PLUS || currentToken()->type == MINUS || currentToken()->type == MULT || currentToken()->type == DIV || currentToken()->type == EXPON) {
+    next();
+  } else {
+    fprintf(stderr, "Erreur : opérateur attendu.\n");
+  }
+}
+
+/*
+F -> x
+F -> ( A )
+F -> | E |
+*/
+void F() {
+  if(currentToken()->type == NUMBER) {
+    next();
+  } else if(currentToken()->type == LB) {
+    next();
+    A();
+    if (currentToken()->type == RB) {
+      next();
+    } else {
+      fprintf(stderr, "Erreur : ')' attendu.\n");
+    }
+
+  // Normalement on ajoute un else if ou on prend en compte le cas si on a le
+  // caractère '|' pour les valeurs absolues. Cependant il n'est pas connu de
+  // la table des symboles.
+  } else {
+    fprintf(stderr, "Erreur : '(' ou '|' attendu.\n");
+  }
+}
+
+/*
+E -> E O F
+E -> F
+*/
+void E() {
+
+}
+
+/*
+A -> v = A
+A -> E
+*/
+void A() {
+  if(currentToken()->type == VAR) {
+    next();
+    if(currentToken()->type == ASSIGN) {
+      next();
+      A();
+    } else {
+      fprintf(stderr, "Erreur : '=' attendu.\n");
+    }
+
+  // Normalement dans le else if on prend en compte le cas si on a le caractère
+  // '|' pour les valeurs absolues. Cependant il n'est pas connu de la table
+  // des symboles.
+  } else if(currentToken()->type == NUMBER || currentToken()->type == LB ) {
+    E();
+  } else {
+    fprintf(stderr, "Erreur : variable, nombre, '(' ou '|' attendu.\n");
+  }
+}
+
+/*
+S -> v = A ;
+*/
+void S() {
+  if(currentToken()->type == VAR) {
+    next();
+    if(currentToken()->type == ASSIGN) {
+      next();
+      A();
+      if (currentToken()->type == SEMICOLON) {
+        next();
+      } else {
+        fprintf(stderr, "Erreur : ';' attendu.\n");
+      }
+    } else {
+      fprintf(stderr, "Erreur : '=' attendu.\n");
+    }
+  } else {
+    fprintf(stderr, "Erreur : variable attendu.\n");
+  }
+}
+
+
+
+
 
 /*********** PROGRAMME PRINCIPAL ************/
 int main(int argc, char *argv[]) {
     // fprintf(stderr, "Lexing from %s.\n", argv[1]);
     initLexer(argv[1]);
     // APPEL A LA SOURCE DE LA GRAMMAIRE
-
+    S();
     // ON VERIFIE QUE LA GRAMMAIRE A BIEN TERMINE SON TRAVAIL A LA FIN DU MOT A ANALYSER
     if (currentToken() != NULL) {
         fprintf(stderr, "Unexpected input after assignation.\n");
@@ -72,5 +169,3 @@ int main(int argc, char *argv[]) {
     print_symbols();
     return 0;
 }
-
-
