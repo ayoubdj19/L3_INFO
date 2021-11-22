@@ -1,4 +1,3 @@
-
 #include "arbrebin.h"
 #include "bfile.h"
 #include "fap.h"
@@ -12,6 +11,11 @@ typedef struct {
 
 struct code_char HuffmanCode[256];
 
+char **t = malloc(sizeof(char*)*256);
+for(int i = 0; i < 256; i++){
+  t[i] = malloc(sizeof(char)*256);
+}
+
 //L'attribut tab de TableOcc est remis à zéro en début de fonction
 void ConstruireTableOcc(FILE *fichier, TableOcc_t *TableOcc) {
     //Caractère lu dans le fichier
@@ -22,7 +26,7 @@ void ConstruireTableOcc(FILE *fichier, TableOcc_t *TableOcc) {
     while (i < 256)
     {
         TableOcc->tab[i] = 0;
-        
+
         i = i + 1;
     }
 
@@ -53,7 +57,7 @@ fap InitHuffman(TableOcc_t *TableOcc) {
 
     int i = 0;
 
-    //On n'insère dans la file que les caractères apparaissant au moins une fois dans le texte. 
+    //On n'insère dans la file que les caractères apparaissant au moins une fois dans le texte.
     while (i < 256)
     {
         if(TableOcc->tab[i] > 0)
@@ -83,7 +87,7 @@ Arbre ConstruireArbre(fap file) {
     {
         //On extrait les deux éléments les plus prioritaires de la file à priorité
         file = extraire(file, &arbre1File, &prioriteArbre1File);
-        
+
         //Si il n'y avait qu'un seul élément dans la file, la construction de l'arbre est terminée.
         //Sinon, on continue l'exécution de l'algorithme
         if(!est_fap_vide(file))
@@ -96,7 +100,7 @@ Arbre ConstruireArbre(fap file) {
             //->Cet élément ne signifie rien de particulier, les caractères encodés par l'algorithme de Huffman étant positionnés sur les feuilles
 
             //On place arbitrairement le premier arbre extrait de la file à gauche et le second à droite.
-            file = inserer(file, NouveauNoeud(arbre1File, 0, arbre2File), prioriteArbre1File + prioriteArbre2File);
+            file = inserer(file, NouveauNoeud(arbre1File, '_', arbre2File), prioriteArbre1File + prioriteArbre2File);
         }
         //Cas dans lequel l'arbre de Huffman est construit
         else
@@ -109,9 +113,26 @@ Arbre ConstruireArbre(fap file) {
 }
 
 
+
+
+void ConstruireCodeRec(Arbre huff, char* w) {
+  if(!EstVide(FilsGauche(huff)) && !EstVide(FilsDroit(huff))) {
+    *w++;
+    *w = 0;
+    ConstruireCodeRec(FilsGauche(huff),w);
+    *w = 1;
+    ConstruireCodeRec(FilsDroit(huff),w);
+  } else {
+    int i = 0;
+    while (w[i] != '\0') {
+        t[huff.etiq][i] = w[i];
+    }
+  }
+}
+
 void ConstruireCode(Arbre huff) {
-    /* A COMPLETER */
-    printf("Programme non realise (ConstruireCode)\n");
+    ConstruireCodeRec(huff);
+    //printf("Programme non realise (ConstruireCode)\n");
 }
 
 void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
