@@ -4,6 +4,7 @@
 #include "huffman_code.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
     int tab[256];
@@ -11,10 +12,7 @@ typedef struct {
 
 struct code_char HuffmanCode[256];
 
-char **t = malloc(sizeof(char*)*256);
-for(int i = 0; i < 256; i++){
-  t[i] = malloc(sizeof(char)*256);
-}
+char **T;
 
 //L'attribut tab de TableOcc est remis à zéro en début de fonction
 void ConstruireTableOcc(FILE *fichier, TableOcc_t *TableOcc) {
@@ -117,21 +115,28 @@ Arbre ConstruireArbre(fap file) {
 
 void ConstruireCodeRec(Arbre huff, char* w) {
   if(!EstVide(FilsGauche(huff)) && !EstVide(FilsDroit(huff))) {
-    *w++;
-    *w = 0;
+    w++;
+    *w = '0';
     ConstruireCodeRec(FilsGauche(huff),w);
-    *w = 1;
+    *w = '1';
     ConstruireCodeRec(FilsDroit(huff),w);
   } else {
     int i = 0;
-    while (w[i] != '\0') {
-        t[huff.etiq][i] = w[i];
+    while (w[i] == '0' || w[i] == '1') {
+      T[huff->etiq][i] = w[i];
+      printf("%s\n",w);
+      i++;
     }
   }
 }
 
 void ConstruireCode(Arbre huff) {
-    ConstruireCodeRec(huff);
+    T = malloc(sizeof(char*)*256);
+    for(int i = 0; i < 256; i++){
+      T[i] = malloc(sizeof(char)*256);
+    }
+    char *w = malloc(sizeof(char)*256);
+    ConstruireCodeRec(huff, w);
     //printf("Programme non realise (ConstruireCode)\n");
 }
 
