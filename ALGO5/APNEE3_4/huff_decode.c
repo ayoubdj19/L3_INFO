@@ -6,16 +6,16 @@
 
 void Decoder(FILE *fichier_encode, Arbre ArbreHuffman) {
     AfficherArbre(ArbreHuffman);
-    
+
     int erreurRencontre = 0;
-    
+
     //Initialisation de la variable BFILE* nous permettant de lire les bits encodés du fichier
     BFILE *lecteurFichier = bstart(fichier_encode, "r");
-    
-    
+
+
     //Variable de parcours de l'arbre de Huffman
     Arbre noeudParcours = ArbreHuffman;
-    
+
     //Lecture des bits du fichier
     //Dès lors que le code est celui d'un caractère est reconnu, on l'affiche à l'écran
     int bitLu = bitread(lecteurFichier);
@@ -29,34 +29,34 @@ void Decoder(FILE *fichier_encode, Arbre ArbreHuffman) {
     	else
     	{
     		//Si le bit lu est 1, on va dans le fils droit du noeud actuel
-    		if(bitLu == 0)
+    		if(bitLu == 1)
 			{
 				noeudParcours = FilsDroit(noeudParcours);
 			}
 			else
 			{
 				printf("Erreur avec la valeur du bit lu lors du décodage du fichier.\n");
-				
+
 				erreurRencontre = 1;
 			}
     	}
-    	
+
     	//Une fois le changement de noeud effectué, on regarde si l'on est sur une feuille ou non.
 		//->Si l'on est sur une feuille, le caractère à afficher à l'écran est l'étiquette de la feuille.
 		//  Une fois le caractère à afficher, on repart du sommet de l'arbre pour décoder le prochain.
 		//->Sinon, on continue le parcours de l'arbre.
-		
+
 		//Si l'on est sur une feuille
 		if(EstVide(FilsGauche(noeudParcours)) && EstVide(FilsDroit(noeudParcours)))
 		{
 			printf("%c", noeudParcours->etiq);
-			
+
 			noeudParcours = ArbreHuffman;
 		}
-    	
+
     	bitLu = bitread(lecteurFichier);
     }
-    
+
     //Si la lecture est terminée alors que l'on est pas au sommet de l'arbre, c'est une erreur.
     if(erreurRencontre == 0 && noeudParcours != ArbreHuffman)
     {
@@ -66,7 +66,7 @@ void Decoder(FILE *fichier_encode, Arbre ArbreHuffman) {
     {
     	printf("\n\n\nDécodage du fichier terminé\n\n.");
     }
-    
+
 }
 
 int main(int argc, char *argv[])
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     else
     {
     	FILE *fichier_encode = fopen(argv[1], "r");
-    	
+
     	//On contrôle que le fichier passé en entrée se soit bien ouvert et ne soit pas vide.
 		if(fichier_encode == NULL)
 		{
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 		else
 		{
 			char premierCaractereFichierLu = fgetc(fichier_encode);
-			
+
 			if(premierCaractereFichierLu == EOF)
 			{
 				printf("Erreur, le fichier passé en entrée est vide.\n");
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 			else
 			{
 				ungetc(premierCaractereFichierLu, fichier_encode);
-				
+
 				//Lecture de l'arbre écrit au début du fichier
 				Arbre ArbreHuffman = LireArbre(fichier_encode);
 
