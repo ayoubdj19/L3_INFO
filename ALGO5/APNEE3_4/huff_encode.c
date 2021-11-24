@@ -114,7 +114,8 @@ Arbre ConstruireArbre(fap file) {
 //Le paramètre "debutCodage" représente le début de codage du mot déduit des branches de l'arbre empruntées.
 //->lorsque l'on passe par un fils gauche pour un appel récursif->la chaine de caractère passée en paramètre est "debutCodage" avec un 0 en plus à la fin.
 //->lorsque l'on passe par un fils droit pour un appel récursif->la chaine de caractère passée en paramètre est "debutCodage" avec un 1 en plus à la fin.
-void ConstruireCodeRec(Arbre huff, int* debutCodage, int tailleDebutCodage) {
+//Cette fonction retourne le pointeur vers debutCodage (au cas où sont adresse soit modifiée suite à un realloc, pour ne pas créer d'erreur du au fait que cette fonction est récursive).
+int* ConstruireCodeRec(Arbre huff, int* debutCodage, int tailleDebutCodage) {
   //Un noeud d'un arbre de Huffman peut soit n'avoir aucun fils, soit en avoir 2.
 
   //Si le noeud sur lequel on se situe n'est pas une feuille, le codage des caractères continue
@@ -124,11 +125,11 @@ void ConstruireCodeRec(Arbre huff, int* debutCodage, int tailleDebutCodage) {
 
   	//Appel sur le fils gauche
   	debutCodage[tailleDebutCodage] = 0;
-  	ConstruireCodeRec(FilsGauche(huff), debutCodage, tailleDebutCodage + 1);
+  	debutCodage = ConstruireCodeRec(FilsGauche(huff), debutCodage, tailleDebutCodage + 1);
 
   	//Appel sur le fils droit
   	debutCodage[tailleDebutCodage] = 1;
-  	ConstruireCodeRec(FilsDroit(huff), debutCodage, tailleDebutCodage + 1);
+  	debutCodage = ConstruireCodeRec(FilsDroit(huff), debutCodage, tailleDebutCodage + 1);
 
 
   	//On réduit la taille de notre tableau de 1 il reprend la taille qu'il avait avant l'appel de cette fonction.
@@ -149,12 +150,14 @@ void ConstruireCodeRec(Arbre huff, int* debutCodage, int tailleDebutCodage) {
     }
     printf("\n");
   }
+  
+  return debutCodage;
 }
 
 //Cette fonction construit le contenu de la variable HuffmanCode à l'aide de l'arbre de Huffman passé en paramètre.
 //Cette fonction utilise la fonction "ConstruireCodeRec" ci-dessus.
 void ConstruireCode(Arbre arbreDeHuffman) {
-	return ConstruireCodeRec(arbreDeHuffman, NULL, 0);
+	ConstruireCodeRec(arbreDeHuffman, NULL, 0);
 }
 
 void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
