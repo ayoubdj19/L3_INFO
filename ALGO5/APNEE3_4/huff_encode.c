@@ -5,14 +5,13 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     int tab[256];
 } TableOcc_t;
 
 struct code_char HuffmanCode[256];
-
-char **T;
 
 //L'attribut tab de TableOcc est remis à zéro en début de fonction
 void ConstruireTableOcc(FILE *fichier, TableOcc_t *TableOcc) {
@@ -24,7 +23,7 @@ void ConstruireTableOcc(FILE *fichier, TableOcc_t *TableOcc) {
     while (i < 256)
     {
         TableOcc->tab[i] = 0;
-
+        
         i = i + 1;
     }
 
@@ -55,7 +54,7 @@ fap InitHuffman(TableOcc_t *TableOcc) {
 
     int i = 0;
 
-    //On n'insère dans la file que les caractères apparaissant au moins une fois dans le texte.
+    //On n'insère dans la file que les caractères apparaissant au moins une fois dans le texte. 
     while (i < 256)
     {
         if(TableOcc->tab[i] > 0)
@@ -85,7 +84,7 @@ Arbre ConstruireArbre(fap file) {
     {
         //On extrait les deux éléments les plus prioritaires de la file à priorité
         file = extraire(file, &arbre1File, &prioriteArbre1File);
-
+        
         //Si il n'y avait qu'un seul élément dans la file, la construction de l'arbre est terminée.
         //Sinon, on continue l'exécution de l'algorithme
         if(!est_fap_vide(file))
@@ -111,33 +110,51 @@ Arbre ConstruireArbre(fap file) {
 }
 
 
-
-
-void ConstruireCodeRec(Arbre huff, char* w) {
+//Fonction appelée par la fonction "ConstruireCode" ci-dessous.
+//Le paramètre "debutCodage" représente le début de codage du mot déduit des branches de l'arbre empruntées.
+//->lorsque l'on passe par un fils gauche pour un appel récursif->la chaine de caractère passée en paramètre est "debutCodage" avec un 0 en plus à la fin.
+//->lorsque l'on passe par un fils droit pour un appel récursif->la chaine de caractère passée en paramètre est "debutCodage" avec un 1 en plus à la fin.
+void ConstruireCodeRec(Arbre huff, int* debutCodage, int tailleDebutCodage) {
+  //Un noeud d'un arbre de Huffman peut soit n'avoir aucun fils, soit en avoir 2.
+  
+  //Si le noeud sur lequel on se situe n'est pas une feuille, le codage des caractères continue
   if(!EstVide(FilsGauche(huff)) && !EstVide(FilsDroit(huff))) {
-    w++;
-    *w = '0';
-    ConstruireCodeRec(FilsGauche(huff),w);
-    *w = '1';
-    ConstruireCodeRec(FilsDroit(huff),w);
-  } else {
+    //Ajout d'un slot int dans le tableau d'entiers représentant le début du codage des caractères.
+  	debutCodage = realloc(debutCodage, (tailleDebutCodage+1) * sizeof(int));  	
+  	
+  	//Appel sur le fils gauche
+  	debutCodage[tailleDebutCodage] = 0;
+  	ConstruireCodeRec(FilsGauche(huff), debutCodage, tailleDebutCodage + 1);
+  	
+  	//Appel sur le fils droit
+  	debutCodage[tailleDebutCodage] = 1;
+  	ConstruireCodeRec(FilsDroit(huff), debutCodage, tailleDebutCodage + 1);
+  	
+  	
+  	//On réduit la taille de notre tableau de 1 il reprend la taille qu'il avait avant l'appel de cette fonction.
+  	debutCodage = realloc(debutCodage, tailleDebutCodage * sizeof(int));
+  }
+  
+  //Sinon, le noeud sur lequel on se situe est une feuille, "debutCodage" pointe vers une chaine de caractères représentant le codage du symbole de la feuille.
+  else {
+    //On copie le tableau d'int pointé par "debutCodage" dans le tableau de codage (qui est une struct qui contient un tableau d'int) à l'indice du caractère codé
+    //Si un tableau existe déjà à cet indice, il remplacé.
     int i = 0;
-    while (w[i] == '0' || w[i] == '1') {
-      T[huff->etiq][i] = w[i];
-      printf("%s\n",w);
+    HuffmanCode[huff->etiq].lg = tailleDebutCodage;
+    printf("%c: ", huff->etiq);
+    while (i < tailleDebutCodage) {
+      HuffmanCode[huff->etiq].code[i] = debutCodage[i];
+      printf("%d", debutCodage[i]);
       i++;
     }
+    printf("\n");
   }
 }
 
-void ConstruireCode(Arbre huff) {
-    T = malloc(sizeof(char*)*256);
-    for(int i = 0; i < 256; i++){
-      T[i] = malloc(sizeof(char)*256);
-    }
-    char *w = malloc(sizeof(char)*256);
-    ConstruireCodeRec(huff, w);
-    //printf("Programme non realise (ConstruireCode)\n");
+//Cette fonction construit le contenu de la variable HuffmanCode à l'aide de l'arbre de Huffman passé en paramètre.
+//Cette fonction utilise la fonction "ConstruireCodeRec" ci-dessus.
+void ConstruireCode(Arbre arbreDeHuffman) {
+	return ConstruireCodeRec(arbreDeHuffman, NULL, 0);
 }
 
 void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
