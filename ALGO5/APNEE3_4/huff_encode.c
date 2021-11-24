@@ -158,7 +158,6 @@ void ConstruireCode(Arbre arbreDeHuffman) {
 }
 
 void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
-    EcrireArbre(fic_out, ArbreHuffman);
     int c = fgetc(fic_in);
     BFILE *bf = bstart(fic_out, "w");
     while (c != EOF) {
@@ -170,6 +169,7 @@ void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
 
         c = fgetc(fic_in);
     }
+    bstop(bf);
     //printf("Programme non realise (Encoder)\n");
 }
 
@@ -199,6 +199,7 @@ int main(int argc, char *argv[]) {
     fichier = fopen(argv[1], "r");
     fichier_encode = fopen(argv[2], "w");
 
+    EcrireArbre(fichier_encode, ArbreHuffman);
     Encoder(fichier, fichier_encode, ArbreHuffman);
 
     fclose(fichier_encode);
