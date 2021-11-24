@@ -226,10 +226,13 @@ int main(int argc, char *argv[])
   				fichier = fopen(argv[1], "r");
   				fichier_encode = fopen(argv[2], "w");
 
-          EcrireArbre(fichier_encode, ArbreHuffman);
+          		EcrireArbre(fichier_encode, ArbreHuffman);
   				Encoder(fichier, fichier_encode, ArbreHuffman);
 
   				fclose(fichier_encode);
+  				
+  				printf("\nÉcriture du fichier \"%s\" terminée sans erreur.\n", argv[2]);
+  				
   				fclose(fichier);
   			}
   		}
